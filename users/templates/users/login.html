@@ -1,0 +1,25 @@
+{%  extends "entries/base.html" %}
+
+
+{%  block content %}
+  <!-- Blog Entries Column -->
+      <div class="col-md-8">
+        <div class="card mb-4">
+          <div class="card-header">
+              Login to Your Account
+          </div>
+          <div class="card-body">
+              <form method="POST">
+                  {%  csrf_token %}
+                  {{ form.as_p  }}
+                  <button type="submit" class="btn btn-primary">Login</button>
+
+              </form>
+              <a href="{% url 'password_reset' %}">Forgot Password</a>
+
+          </div>
+            <h2>If you dont have a account <a href="{% url 'register' %}">join us</a></h2>
+        </div>
+
+      </div>
+{% endblock %}

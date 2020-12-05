@@ -1,0 +1,158 @@
+{% extends "entries/base.html" %}
+{#bu base html i extends etmesi demek inheritance yani, base.htmldeki block content içine bu sayfanın içeriği gelir#}
+
+{% block content %}
+    <!-- Blog Entries Column -->
+    <div class="col-md-9">
+        {#        <a href="{% url 'blog-home' %}">Back to Home</a> back to home yerine anasayfaya dönüş için headerdaki logo ya da ev logosu yeterli#}
+        <!-- Blog Post -->
+        <div class="card mb-4">
+            <div class="entry-detail-area">
+                <div class="card-footer text-muted entry-author-publish-info">
+                    Posted on {{ entry.entry_date }} by
+                    <a href="#">{{ entry.entry_author }}</a> <!--  burası a yerine duruma göre span olabilir -->
+
+                </div>
+
+            </div>
+
+            <img class="card-img-top entry-img" src="{{ entry.image.url }}" height=”300” width=”750”
+                 alt="Card image cap">
+            <div class="card-body">
+                <h2 class="card-title">{{ entry.entry_title }}</h2>
+                <p class="card-text">{{ entry.entry_text }}</p>
+            </div>
+
+        </div>
+        <hr>
+
+        <!--- Comment Section -->
+        <div class="col-md-12 card-body">
+            {% if user.is_authenticated %}
+                {% if new_comment %}
+                    <div class="alert alert-success" role="alert">
+                        Your comment is awaiting moderation
+                    </div>
+                {% else %}
+                    <h3>Leave a comment</h3>
+                    <form method="post" style="margin-top: 1.3em;">
+                        {{ comment_form.as_p }}
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary">Comment</button>
+                    </form>
+                {% endif %}
+
+            {% else %}
+                <h3>You have to log in if you want to comment!!</h3>
+            {% endif %}
+            <h2>{{ comments.count }} comments</h2>
+            {% for comment in comments %}
+                <div class="comments" style="padding: 10px;">
+                    <p class="font-weight-bold">
+                        {{ comment.commenter }}
+                        <span class=" text-muted font-weight-normal">
+                  {{ comment.created_on }}
+                </span>
+
+                    </p>
+                    {{ comment.comment_content | linebreaks }}
+                    {% if request.user == comment.commenter %}
+                        <form method="post" action="{% url 'delete-comment' comment.pk %}">
+                            {% csrf_token %}
+                            <button class="btn btn-danger" type="submit">Delete</button>
+                        </form>
+                    {% endif %}
+                    <hr/>
+
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="col-md-3 edit-delete-like-total">
+
+        <div class="card my-4">
+            <div class="card-body">
+                <div class="like-entry-area">
+
+                    <form action="{% url 'like_entry' entry.pk %}" method="post">
+                        {% csrf_token %}
+                        {% if liked %}
+                            <button type="submit" name="entry_id" value="{{ entry.id }}"
+                                    class="btn btn-danger btn-lg">
+                                <i onclick="Like_Up(this)" class="fa fa-thumbs-down"></i>
+                            </button>
+                        {% else %}
+                            <button type="submit" name="entry_id" value="{{ entry.id }}"
+                                    class="btn btn-primary btn-lg">
+                                <i onclick="Like_Down(this)" class="fa fa-thumbs-up"></i>
+                            </button>
+                        {% endif %}
+
+                        - {{ total_likes }} Likes
+                    </form>
+                </div>
+                {% if request.user == entry.entry_author %}
+                    <div class="edit-delete-button-area">
+                        <button class="btn btn-danger" onclick="document.getElementById('id01').style.display='block'">
+                            Delete
+                        </button>
+                        <button class="btn entry-edit-button ">
+                            <a class="btn btn-primary" href="{% url 'entry-edit' pk=entry.pk %}">Edit</a>
+                        </button>
+                        <div id="id01" class="modal-delete">
+                            <span onclick="document.getElementById('id01').style.display='none'" class="close-delete"
+                                  title="Close Modal">×</span>
+                            <form class="modal-content-delete" action="{% url 'delete-entry' entry.pk %}" method="post">
+                                {% csrf_token %}
+                                <div class="container modal-center">
+                                    <h1 class="delete-text">Delete Entry</h1>
+                                    <p class="delete-text">Are you sure you want to delete your entry?</p>
+
+                                    <div class="clearfix-delete">
+                                        <button type="button"
+                                                onclick="document.getElementById('id01').style.display='none'"
+                                                class="cancelbtn-delete">Cancel
+                                        </button>
+                                        <button type="submit"
+                                                onclick="document.getElementById('id01').style.display='none'"
+                                                class="deletebtn-delete">Delete
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+    <script>
+        // Get the modal
+        var modal = document.getElementById('id01');
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        function Like_Down(x) {
+            x.classList.toggle("fa-thumbs-down");
+        }
+
+        function Like_Up(x) {
+            x.classList.toggle("fa-thumbs-up");
+        }
+    </script>
+    <style>
+
+        .sidebar-nav {
+            display: none;
+        }
+    </style>
+{% endblock %}
+

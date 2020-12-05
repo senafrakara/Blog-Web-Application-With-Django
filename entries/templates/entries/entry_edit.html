@@ -1,0 +1,26 @@
+{% extends "entries/base.html" %}
+
+{%  block content %}
+  <!-- Blog Entries Column -->
+      <div class="col-md-8 entry-edit-area">
+        <div class="card mb-4">
+
+          <div class="card-header">
+              Edit Your Blog Post
+          </div>
+          <div class="card-body entry-edit-form">
+              <form method="POST" enctype="multipart/form-data">
+                  {%  csrf_token %}
+                  {{ form.as_p  }}
+                  <button type="submit" class="btn btn-primary">Edit Post</button>
+
+
+              </form>
+          </div>
+        </div>
+
+      </div>
+{% endblock %}
+
+
+

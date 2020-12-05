@@ -1,0 +1,50 @@
+.entry-img {
+    height: 350px !important;
+    max-width: 100%!important;
+    object-fit: cover !important;
+}
+.create-entry-main .create-entry input#id_entry_title, .entry-edit-area .entry-edit-form input#id_entry_title
+{
+    width: 80% !important;
+    height: 40px!important
+}
+.create-entry-main .create-entry textarea#id_entry_text, .entry-edit-area .entry-edit-form textarea#id_entry_text
+{
+    width: 80% !important;
+    height: 700px !important
+}
+textarea#id_comment_content {
+    width: 100%;
+	box-sizing:border-box;
+	display:block;
+	line-height:1.5;
+	padding:15px 15px 30px;
+	border-radius:3px;
+	border:1px solid #4c00b5;
+	font:13px Tahoma, cursive;
+	transition:box-shadow 0.5s ease;
+	box-shadow:0 4px 6px rgba(0,0,0,0.1);
+	font-smoothing:subpixel-antialiased;
+}
+.entry-detail-area {
+    display: flex;
+}
+
+.entry-detail-area .edit-delete-button-area{
+    width: 22%;
+}
+.entry-detail-area .entry-author-publish-info{
+    width: 70%;
+}
+.like-entry-area{
+    margin-top: 1%;
+}
+.fa {
+  font-size: 50px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.fa:hover {
+    color: darkblue;
+}
