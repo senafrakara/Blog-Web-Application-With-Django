@@ -1,23 +1,49 @@
-{%  extends "entries/base.html" %}
+{% extends "entries/base.html" %}
 {#bu base html i extends etmesi demek inheritance yani, base.htmldeki block content içine bu sayfanın içeriği gelir#}
 
-{%  block content %}
-  <!-- Blog Entries Column -->
-      <div class="col-md-8 create-entry-main">
+{% block content %}
+    <style>
+        label {
+            width: 100%;
+        }
+
+        ::-webkit-file-upload-button {
+            display: inline-block;
+            font-weight: 400;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            border: 1px solid transparent;
+            padding: .375rem .75rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            border-radius: .25rem;
+            transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+            color: #fff;
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+    </style>
+    <!-- Blog Entries Column -->
+    <div class="col-md-12 col-lg-12 col-sm-12 create-entry-main">
         <div class="card mb-4">
-          <div class="card-header">
-              Create Blog Post
-          </div>
-          <div class="card-body create-entry">
-              <form method="POST" enctype="multipart/form-data">
-                  {%  csrf_token %}
-                  {{ form.as_p  }}
-                  <button type="submit" class="btn btn-primary">Post Entry</button>
+            <div class="card-header">
+                Create Blog Post
+            </div>
+            <div class="card-body create-entry">
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-primary post-entry-button">Post Entry</button>
 
 
-              </form>
-          </div>
+                </form>
+            </div>
         </div>
 
-      </div>
+    </div>
 {% endblock %}

@@ -1,47 +1,118 @@
 {% extends "entries/base.html" %}
 {#bu base html i extends etmesi demek inheritance yani, base.htmldeki block content içine bu sayfanın içeriği gelir#}
-
+{% load static %}
 {% block content %}
+    <style>
+        .header-text {
+            color: white;
+            font-size: 40px;
+            line-height: 1.4em;
+            letter-spacing: 0.4px;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .author-tesxt {
+
+            color: white;
+            font-size: 15px;
+            font-style: normal;
+            line-height: 0.7em;
+            letter-spacing: 0px;
+        }
+
+        .header-section {
+            height: 450px;
+            background-image: url(/static/djangoProject/images/5.jpg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 5%;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+
+        }
+
+        .header-sec-photo {
+            background-color: transparent !important;
+        }
+    </style>
     <!-- Blog Entries Column -->
-    <div class="col-md-8">
-
-        <h1 class="my-4">Page Heading
-            <small>Secondary Text</small>
-        </h1>
-
-        {% for entry in blog_entries %}
-            <!-- Blog Post -->
+    <div class="col-md-12 col-lg-12 col-sm-12 header-section" style="margin-top: 2%;">
+        <section class="jumbotron text-center bg-white header-sec-photo">
+            <div class="container">
+                <p class="lead header-text">"Live life to the fullest, and focus on the positive"</p>
+                <p class="author-tesxt">Matt Cameron</p>
+            </div>
+        </section>
+    </div>
+    <div class="col-md-12 col-sm-12 col-lg-12"></div>
+    {% for entry in blog_entries %}
+        <div class="col-sm-12 col-md-4 col-lg-4">
             <div class="card mb-4">
-                <div class="card-footer text-muted">
-                    Posted on {{ entry.entry_date }} by
-                    <a href="#">{{ entry.entry_author }}</a> <!--  burası a yerine duruma göre span olabilir -->
-                </div>
-
-                <img class="card-img-top entry-img" src="{{ entry.image.url }}" height=”300” width=”750”
+                <img class="card-img-top entry-img-main" src="{{ entry.image.url }}" height=”300” width=”750”
                      alt="Card image cap">
-                <div class="card-body">
-                    <h2 class="card-title">{{ entry.entry_title }}</h2>
-                    <p class="card-text">{{ entry.entry_text |truncatechars:150 }}</p>
-                    <a href="{% url 'entry-detail' entry.pk %}" class="btn btn-primary">Read More &rarr;</a>
+                <div class="card-body" style="height: 270px;">
+                    <div class="index-title-entry">
+                        <h3 class="card-title index-title-entry">{{ entry.entry_title }}</h3>
+                    </div>
+
+                    <div class="date-author-detail">
+                        <span>{{ entry.entry_date| date:'d-m-Y' }}</span>
+                        <span><a
+                                href="{% url 'user_profile' entry.entry_author.profile.pk %}">{{ entry.entry_author }}</a></span>
+                    </div>
+                    <div class="entry-text-main">
+                        <p class="card-text">{{ entry.entry_text |truncatechars:150 }}</p>
+                    </div>
+                    {#                    <a href="{% url 'entry-detail' entry.pk %}" class="btn btn-primary">Read More &rarr;</a>#}
+                    <a class="read-more-btn" href="{% url 'entry-detail' entry.pk %}">Read More »</a>
                 </div>
             </div>
-        {% endfor %}
+        </div>
 
-        {% if is_paginated %}
-            <!-- Pagination -->
-            <ul class="pagination justify-content-center mb-4">
-                {% if page_obj.has_previous %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">&larr; Older</a>
-                    </li>
-                {% endif %}
-
-                {% if page_obj.has_next %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.next_page_number }}">Newer &rarr;</a>
-                    </li>
-                {% endif %}
-            </ul>
-        {% endif %}
+    {% endfor %}
     </div>
+
+    {##}
+    {#    <div class="col-md-8">#}
+    {#        {% for entry in blog_entries %}#}
+    {#            <!-- Blog Post -->#}
+    {#            <div class="card mb-4">#}
+    {#                <div class="card-footer text-muted">#}
+    {#                    Posted on {{ entry.entry_date }} by#}
+    {#                    <a href="{% url 'user_profile' entry.entry_author.profile.pk %}">{{ entry.entry_author }}</a>#}
+    {#                </div>#}
+    {##}
+    {#                <img class="card-img-top entry-img" src="{{ entry.image.url }}" height=”300” width=”750”#}
+    {#                     alt="Card image cap">#}
+    {#                <div class="card-body">#}
+    {#                    <h2 class="card-title">{{ entry.entry_title }}</h2>#}
+    {#                    <p class="card-text">{{ entry.entry_text |truncatechars:150 }}</p>#}
+    {#                    <a href="{% url 'entry-detail' entry.pk %}" class="btn btn-primary">Read More &rarr;</a>#}
+    {#                </div>#}
+    {#            </div>#}
+    {#        {% endfor %}#}
+    {##}
+    {#        {% if is_paginated %}#}
+    {#            <!-- Pagination -->#}
+    {#            <ul class="pagination justify-content-center mb-4">#}
+    {#                {% if page_obj.has_previous %}#}
+    {#                    <li class="page-item">#}
+    {#                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">&larr; Older</a>#}
+    {#                    </li>#}
+    {#                {% endif %}#}
+    {##}
+    {#                {% if page_obj.has_next %}#}
+    {#                    <li class="page-item">#}
+    {#                        <a class="page-link" href="?page={{ page_obj.next_page_number }}">Newer &rarr;</a>#}
+    {#                    </li>#}
+    {#                {% endif %}#}
+    {#            </ul>#}
+    {#        {% endif %}#}
+    {#    </div>#}
+
+
 {% endblock %}

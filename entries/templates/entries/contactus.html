@@ -1,0 +1,37 @@
+{% extends 'entries/base.html' %}
+{% load static %}
+{% block content %}
+    {% load crispy_forms_tags %}
+
+    <div class="col-md-12 col-lg-12 col-sm-12" style="margin-top: 2%;">
+
+        <div class="card mb-4">
+           <div class="card-header">
+                Contact Us
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    {% if username %}
+                        <h2>Thank you for message, {{ username }}</h2>
+                        <br>
+                        <p>We received your email and will respond shortly...</p>
+                        <hr>
+                        <br><br><br><br><br>
+                    {% else %}
+                        <form action="{% url 'contactus' %}" method="POST">
+                            {% csrf_token %}
+                            {{ form|crispy }}
+                            <br>
+                            <div class="form-group">
+                                <button class="btn btn-blue" type="submit">Submit</button>
+                                <button class="btn btn-danger" type="reset">Reset</button>
+                            </div>
+                        </form>
+
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}

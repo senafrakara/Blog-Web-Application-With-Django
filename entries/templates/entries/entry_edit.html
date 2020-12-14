@@ -1,25 +1,83 @@
 {% extends "entries/base.html" %}
+{% load static %}
 
-{%  block content %}
-  <!-- Blog Entries Column -->
-      <div class="col-md-8 entry-edit-area">
-        <div class="card mb-4">
+{% block content %}
+    <style>
+        ::-webkit-file-upload-button {
+            display: inline-block;
+            font-weight: 400;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            border: 1px solid transparent;
+            padding: .375rem .75rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            border-radius: .25rem;
+            transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+            color: #fff;
+            background-color: #007bff;
+            border-color: #007bff;
+        }
 
-          <div class="card-header">
-              Edit Your Blog Post
-          </div>
-          <div class="card-body entry-edit-form">
-              <form method="POST" enctype="multipart/form-data">
-                  {%  csrf_token %}
-                  {{ form.as_p  }}
-                  <button type="submit" class="btn btn-primary">Edit Post</button>
+        p {
+            margin-top: 1rem;
+            margin-bottom: 2rem;
+        }
 
+        label {
+            display: inline-block;
+            margin-bottom: .5rem;
+            margin-right: 2%;
+            width: 100%;
+            color: #b65be4;
+            font-size: 20px;
+            font-weight: 400;
+        }
 
-              </form>
-          </div>
+        input {
+            width: 80%;
+        }
+
+        textarea#id_entry_text {
+            width: 80% !important;
+            height: 700px !important;
+        }
+
+    </style>
+
+    {% if user.is_authenticated %}
+
+        <div class="col-md-12 col-lg-12 col-sm-12" style="margin-top: 2%;">
+
+            <div class="card mb-4">
+                <div class="row">
+                    <div class="col-md-8 col-lg-8 col-sm-12">
+                        <img class="card-img-top entry-img" src="{{ entry.image.url }}">
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <form method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            {{ form.media }}
+                            {{ form.as_p }}
+                            <button class="btn btn-primary" style="float: right;">Save Changes</button>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
 
-      </div>
+    {% else %}
+        You are not allowed here!!!
+
+    {% endif %}
 {% endblock %}
 
 

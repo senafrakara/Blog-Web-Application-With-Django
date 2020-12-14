@@ -1,0 +1,117 @@
+{% extends "entries/base.html" %}
+{#bu base html i extends etmesi demek inheritance yani, base.htmldeki block content içine bu sayfanın içeriği gelir#}
+{% load static %}
+{% block content %}
+    <style>
+        p {
+            margin-top: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        ::-webkit-file-upload-button {
+            display: inline-block;
+            font-weight: 400;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            border: 1px solid transparent;
+            padding: .375rem .75rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            border-radius: .25rem;
+            transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+            color: #fff;
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+        label {
+            display: inline-block;
+            margin-bottom: .5rem;
+            margin-right: 2%;
+            width: 100%;
+            color: #b65be4;
+            font-size: 20px;
+            font-weight: 400;
+        }
+
+        input {
+            width: 50%;
+        }
+
+        textarea#id_bio {
+            height: 300px;
+            width: 80%;
+        }
+
+    </style>
+    {% if user.is_authenticated %}
+        {% if messages %}
+            <div class="col-lg-3 color03">
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+        {% if request.user.id == profile.user.id %}
+            <div class="col-md-12 col-lg-12 col-sm-12" style="margin-top: 2%;">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        Edit User Profile
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12 col-sm-auto mb-3">
+                                <div class="mx-auto" style="width: 140px;">
+                                    <div class="d-flex justify-content-center align-items-center rounded"
+                                         style="height: 140px; background-color: rgb(233, 236, 239);"><span
+                                            style="color: rgb(166, 168, 170); font: bold 8pt Arial;">
+                                        {% if profile.profile_pic %}
+                                            <img src="{{ profile.profile_pic.url }}" class="profile-pic">
+                                        {% else %}
+                                            <img class="profile-pic"
+                                                 src="{% static 'djangoProject/images/profile2.png' %}">
+                                        {% endif %}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col d-flex flex-column flex-sm-row justify-content-between mb-3">
+                                <div class="text-center text-sm-left mb-2 mb-sm-0"><h4
+                                        class="pt-sm-2 pb-1 mb-0 text-nowrap">{{ profile.user.first_name }} {{ profile.user.last_name }}</h4>
+                                    <p class="mb-0">@{{ profile.user.username }}</p>
+                                </div>
+                                {#                                <div class="text-center text-sm-right"><span#}
+                                {#                                    <div class="text-muted"><small></small></div>#}
+                                {#                                </div>#}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <form method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                {{ form.media }}
+                                {{ form.as_p }}
+                                <button class="btn btn-primary" style="float: right;">Save Changes</button>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        {% else %}
+            You are not the correct user to edit this page...
+
+        {% endif %}
+
+    {% else %}
+        You are not allowed here!!!
+
+    {% endif %}
+
+{% endblock %}

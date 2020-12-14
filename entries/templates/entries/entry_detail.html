@@ -1,16 +1,107 @@
 {% extends "entries/base.html" %}
 {#bu base html i extends etmesi demek inheritance yani, base.htmldeki block content içine bu sayfanın içeriği gelir#}
-
+{% load static %}
+{#this is for to get static file in base dir #}
 {% block content %}
+    <style>
+        .sidebar-nav {
+            display: none;
+        }
+
+        .favorite-entry i.fa.fa-thumbs-down {
+            display: none;
+        }
+
+        .favorite-entry i.fa.fa-thumbs-up {
+            display: none;
+        }
+
+        svg.bi.bi-heart-fill {
+            margin-left: 5px;
+            width: 17px;
+            height: 17px;
+        }
+    </style>
     <!-- Blog Entries Column -->
     <div class="col-md-9">
-        {#        <a href="{% url 'blog-home' %}">Back to Home</a> back to home yerine anasayfaya dönüş için headerdaki logo ya da ev logosu yeterli#}
+
         <!-- Blog Post -->
-        <div class="card mb-4">
+        <div class="card mb-4" style="margin-top: 3%;">
             <div class="entry-detail-area">
                 <div class="card-footer text-muted entry-author-publish-info">
                     Posted on {{ entry.entry_date }} by
-                    <a href="#">{{ entry.entry_author }}</a> <!--  burası a yerine duruma göre span olabilir -->
+                    <a href="{% url 'user_profile' entry.entry_author.profile.pk %}">{{ entry.entry_author.first_name }} {{ entry.entry_author.last_name }}</a>
+                    {% if request.user == entry.entry_author %}
+                        {% if request.user.is_authenticated %}
+                            <button class="btn btn-danger delete-entry-button"
+                                    onclick="document.getElementById('id01').style.display='block'">
+                                Delete
+                            </button>
+                            <form method="GET" action="{% url 'entry-edit' pk=entry.pk %}" class="entry-edit-button">
+                                {% csrf_token %}
+                                <button class="btn btn-primary entry-edit-button" type="submit">Edit</button>
+                            </form>
+                            <div id="id01" class="modal-delete">
+                            <span onclick="document.getElementById('id01').style.display='none'" class="close-delete"
+                                  title="Close Modal">×</span>
+                                <form class="modal-content-delete" action="{% url 'delete-entry' entry.pk %}"
+                                      method="post">
+                                    {% csrf_token %}
+                                    <div class="container modal-center">
+                                        <h1 class="delete-text">Delete Entry</h1>
+                                        <p class="delete-text">Are you sure you want to delete your entry?</p>
+
+                                        <div class="clearfix-delete">
+                                            <button type="button"
+                                                    onclick="document.getElementById('id01').style.display='none'"
+                                                    class="cancelbtn-delete">Cancel
+                                            </button>
+                                            <button type="submit"
+                                                    onclick="document.getElementById('id01').style.display='none'"
+                                                    class="deletebtn-delete">Delete
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        {% endif %}
+                    {% endif %}
+
+                    <form action="{% url 'favorite_entry' entry.pk %}" method="post" class="favorite-entry">
+                        {% csrf_token %}
+                        {% if request.user.is_authenticated %}
+                            {% if request.user != entry.entry_author %}
+                                {% if favorite %}
+                                    <!--If user is logged in and if it did favorite this entry before-->
+                                    <button type="submit" name="entry_id" value="{{ entry_id }}"
+                                            class="btn btn-danger btn-md">
+                                        Remove from Favorites<i onclick="Like_Up(this)"
+                                                                class="fa fa-thumbs-down"></i>
+                                        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-heart-fill"
+                                             fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd"
+                                                  d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
+                                        </svg>
+                                    </button>
+                                {% else %}
+                                    <!--If user is logged in and if it did not favorite this entry before -->
+                                    <button type="submit" name="entry_id" value="{{ entry_id.id }}"
+                                            class="btn btn-primary btn-md">
+                                        Add to Favorites<i onclick="Like_Down(this)" class="fa fa-thumbs-up"></i>
+                                        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-heart-fill"
+                                             fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd"
+                                                  d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
+                                        </svg>
+                                    </button>
+                                {% endif %}
+                            {% endif %}
+
+                            <!-- If user is not logged in then it does not see any favorite button -->
+                        {% endif %}
+
+                    </form>
+
 
                 </div>
 
@@ -25,48 +116,97 @@
 
         </div>
         <hr>
+        <div class="card mb-3">
+            <div class="row no-gutters">
+                <div class="col-md-3 col-lg-3 col-sm-2">
+                    {% if entry.entry_author.profile.profile_pic %}
+                        <a class="card-title author-detail"
+                           href="{% url 'user_profile' entry.entry_author.profile.pk %}">
+                            <img class="profile-pic rounded-circle"
+                                 src="{{ entry.entry_author.profile.profile_pic.url }}"></a>
+                    {% else %}
+                        <a class="card-title author-detail"
+                           href="{% url 'user_profile' entry.entry_author.profile.pk %}">
+                            <img class="profile-pic" src="{% static 'djangoProject/images/profile2.png' %}"></a>
+
+                    {% endif %}
+
+                </div>
+                <div class="col-md-9 col-lg-9 col-sm-10">
+                    <div class="card-body">
+
+                        <a class="card-title author-detail"
+                           href="{% url 'user_profile' entry.entry_author.profile.pk %}">{{ entry.entry_author.first_name }} {{ entry.entry_author.last_name }}</a>
+
+                        <p class="small text-muted social-links">
+                            {% if entry.entry_author.profile.website_url %}
+                                <a href="{{ entry.entry_author.profile.website_url }}">Website</a> |
+                            {% endif %}
+                            {% if entry.entry_author.profile.faceboook_url %}
+                                <a href="{{ entry.entry_author.profile.faceboook_url }}">Facebook</a> |
+                            {% endif %}
+                            {% if entry.entry_author.profile.twitter_url %}
+                                <a href="{{ entry.entry_author.profile.twitter_url }}">Twitter</a> |
+                            {% endif %}
+                            {% if entry.entry_author.profile.instagram_url %}
+                                <a href="{{ entry.entry_author.profile.instagram_url }}">Instagram</a> |
+                            {% endif %}
+                            {% if entry.entry_author.profile.pinterest_url %}
+                                <a href="{{ entry.entry_author.profile.pinterest_url }}">Pinterest</a> |
+                            {% endif %}
+
+                        </p>
+                        <p class="card-text">{{ entry.entry_author.profile.bio |truncatechars:150 }}</p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
 
         <!--- Comment Section -->
-        <div class="col-md-12 card-body">
-            {% if user.is_authenticated %}
-                {% if new_comment %}
-                    <div class="alert alert-success" role="alert">
-                        Your comment is awaiting moderation
-                    </div>
-                {% else %}
-                    <h3>Leave a comment</h3>
-                    <form method="post" style="margin-top: 1.3em;">
-                        {{ comment_form.as_p }}
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-primary">Comment</button>
-                    </form>
-                {% endif %}
+        <div class="card mb-3">
+            <div class="col-md-12 card-body">
+                {% if user.is_authenticated %}
+                    {% if new_comment %}
+                        <div class="alert alert-success" role="alert">
+                            Your comment is awaiting moderation
+                        </div>
+                    {% else %}
+                        <h3>Leave a comment</h3>
+                        <form method="post" style="margin-top: 1.3em;">
+                            {{ comment_form.as_p }}
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary comment-btn">Comment</button>
+                        </form>
+                    {% endif %}
 
-            {% else %}
-                <h3>You have to log in if you want to comment!!</h3>
-            {% endif %}
-            <h2>{{ comments.count }} comments</h2>
-            {% for comment in comments %}
-                <div class="comments" style="padding: 10px;">
-                    <p class="font-weight-bold">
-                        {{ comment.commenter }}
-                        <span class=" text-muted font-weight-normal">
+                {% else %}
+                    <h3>You have to log in if you want to comment!!</h3>
+                {% endif %}
+                <h2 class="comment-counts">{{ comments.count }} comments</h2>
+                {% for comment in comments %}
+                    <div class="comments" style="padding: 10px;">
+                        <p class="font-weight-bold">
+                            {{ comment.commenter }}
+                            <span class=" text-muted font-weight-normal">
                   {{ comment.created_on }}
                 </span>
 
-                    </p>
-                    {{ comment.comment_content | linebreaks }}
-                    {% if request.user == comment.commenter %}
-                        <form method="post" action="{% url 'delete-comment' comment.pk %}">
-                            {% csrf_token %}
-                            <button class="btn btn-danger" type="submit">Delete</button>
-                        </form>
-                    {% endif %}
-                    <hr/>
+                        </p>
+                        {{ comment.comment_content | linebreaks }}
+                        {% if request.user == comment.commenter %}
+                            <form method="post" action="{% url 'delete-comment' comment.pk %}">
+                                {% csrf_token %}
+                                <button class="btn btn-danger" type="submit">Delete</button>
+                            </form>
+                        {% endif %}
+                        <hr/>
 
-                </div>
-            {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
         </div>
+
     </div>
 
     <div class="col-md-3 edit-delete-like-total">
@@ -92,39 +232,6 @@
                         - {{ total_likes }} Likes
                     </form>
                 </div>
-                {% if request.user == entry.entry_author %}
-                    <div class="edit-delete-button-area">
-                        <button class="btn btn-danger" onclick="document.getElementById('id01').style.display='block'">
-                            Delete
-                        </button>
-                        <button class="btn entry-edit-button ">
-                            <a class="btn btn-primary" href="{% url 'entry-edit' pk=entry.pk %}">Edit</a>
-                        </button>
-                        <div id="id01" class="modal-delete">
-                            <span onclick="document.getElementById('id01').style.display='none'" class="close-delete"
-                                  title="Close Modal">×</span>
-                            <form class="modal-content-delete" action="{% url 'delete-entry' entry.pk %}" method="post">
-                                {% csrf_token %}
-                                <div class="container modal-center">
-                                    <h1 class="delete-text">Delete Entry</h1>
-                                    <p class="delete-text">Are you sure you want to delete your entry?</p>
-
-                                    <div class="clearfix-delete">
-                                        <button type="button"
-                                                onclick="document.getElementById('id01').style.display='none'"
-                                                class="cancelbtn-delete">Cancel
-                                        </button>
-                                        <button type="submit"
-                                                onclick="document.getElementById('id01').style.display='none'"
-                                                class="deletebtn-delete">Delete
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-
-                    </div>
-                {% endif %}
             </div>
         </div>
 
@@ -147,12 +254,19 @@
         function Like_Up(x) {
             x.classList.toggle("fa-thumbs-up");
         }
+
+        function FavoriteDown(x) {
+            x.classList.toggle("fa-thumbs-down");
+        }
+
+        function FavoriteUp(x) {
+            x.classList.toggle("fa-thumbs-up");
+        }
+
     </script>
     <style>
 
-        .sidebar-nav {
-            display: none;
-        }
+
     </style>
 {% endblock %}
 

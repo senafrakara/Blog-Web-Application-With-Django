@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 from django.contrib.auth import views as auth_views
 
+from .views import EditProfilePageView, UserAccountSettingsView, ShowProfilePageView
 
 urlpatterns = [
     path('register/', views.register, name='register'),
@@ -30,7 +31,10 @@ urlpatterns = [
          auth_views.PasswordResetCompleteView.as_view(
              template_name='users/password_reset_complete.html'
          ),
-         name='password_reset_complete')
-
+         name='password_reset_complete'),
+    path('change_password/', views.change_password, name='change_password'),
+    path('account_settings/',  UserAccountSettingsView.as_view(), name='user_account_settings'),
+    path('user_profile/<int:pk>', ShowProfilePageView.as_view(), name='user_profile'),
+    path('edit_profile_page/<int:pk>', EditProfilePageView.as_view(), name='edit_profile_page'),
+    path('favorite_list/', views.favorite_list, name='favorite_list')
 ]
-

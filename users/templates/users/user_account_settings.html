@@ -1,0 +1,61 @@
+{% extends 'entries/base.html' %}
+{% load static %}
+{% block title %} User Account Settings {% endblock %}
+{% block content %}
+
+    <style>
+        div#id_password {
+            display: none;
+        }
+
+        label {
+            display: inline-block;
+            margin-bottom: .5rem;
+            margin-right: 2%;
+            width: 100%;
+            color: #b65be4;
+            font-size: 20px;
+            font-weight: 400;
+        }
+
+        input {
+            width: 50%;
+        }
+
+        form {
+            padding: 3%;
+        }
+
+    </style>
+
+    <div class="col-md-8 edit-profile-form">
+        <div class="card mb-4">
+            <div class="card-header">
+                Edit Your Account Settings
+            </div>
+            <div class="form-group">
+                <form method="POST">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-primary" style="float: right;">Save Changes</button>
+
+
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        {#these scripts are to hide some unwanted values such as passowrd, date added etc in edit profile form#}
+        var helptext = document.getElementsByClassName("helptext")
+        helptext[0].style.display = "none";
+        var paragraphs = document.getElementsByTagName("p");
+        for (var i = 0; i < paragraphs.length; i++) {
+            if (i == 0 || i == 1 || i == 2 || i == 3 || i == 4 || i == 5 || i == 10 || i == 11 || i == 12) {
+                paragraphs[i].style.display = "none"
+            }
+        }
+
+    </script>
+{% endblock content %}

@@ -20,54 +20,110 @@
     <link href="{% static 'entries/css/delete-modal.css' %}" rel="stylesheet">
     <link href="{% static 'entries/css/style.css' %}" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" id="ecommerce.css-css"
+          href="https://mdbcdn.b-cdn.net/wp-content/themes/mdbootstrap4/css/compiled-ecommerce-4.18.0.min.css?ver=4.18.0"
+          type="text/css" media="all">
+
 </head>
 
 <body>
+{% if messages %}
+    {% for message in messages %}
+        {% if message.tags %}
+            <script>alert("{{ message }}")</script> {% endif %}
 
+    {% endfor %}
+
+{% endif %}
 <!-- Navigation -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+<div class="header-wrapper">
     <div class="container">
-        <a class="navbar-brand" href="{% url 'blog-home' %}">Start Bootstrap</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
-                aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarResponsive">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" href="{% url 'blog-home' %}">Home
-                        <span class="sr-only">(current)</span>
-                    </a>
-                </li>
-                <!--   <li class="nav-item">
-                     <a class="nav-link" href="#">About</a>
-                   </li>
-                   <li class="nav-item">
-                     <a class="nav-link" href="#">Services</a>
-                   </li>
-                   <li class="nav-item">
-                     <a class="nav-link" href="#">Contact</a>
-                   </li> -->
-                {% if user.is_authenticated %}
-                    <li class="nav-item">
-                    <a class="nav-link" href="{% url 'create_entry' %}">Post Now</a>
-                {% else %}
-                {% endif %}
-                {% if user.is_authenticated %}
-                    </li>
-                    <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
-                    </li>
-                {% else %}
-                    <li><a class="nav-link" href="{% url 'login' %}">Login</a></li>
-                {% endif %}
+        <header role="banner">
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+                <div class="container">
+                    <a class="navbar-brand" href="{% url 'blog-home' %}">My Compass</a>
+                    {#                    <a class="navbar-brand" href="{% url 'blog-home' %}"><img src="" style="height: 64px; width: 64px"></a>#}
+                    <button class=" navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
+                            aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarResponsive">
 
-            </ul>
-        </div>
+                        <ul class="navbar-nav mr-auto" style="margin-left: 13% !important;">
+                            <li class="nav-item active">
+                                <a class="nav-link blog-home" href="{% url 'blog-home' %}">Home
+                                    <span class="sr-only">(current)</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'aboutus' %}">About Us <span
+                                        class="sr-only">(current)</span></a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'contactus' %}">Contact Us <span
+                                        class="sr-only">(current)</span></a>
+                            </li>
+                            {% if user.is_authenticated %}
+                                <li class="nav-item">
+                                <a class="nav-link" href="{% url 'create_entry' %}">Post Now</a>
+                            {% else %}
+                            {% endif %}
+
+                        </ul>
+                        <ul class="navbar-nav ml-auto">
+                            <form action="{% url 'search' %}" method="GET"
+                                  class="form-inline d-flex justify-content-center md-form form-sm mt-3">
+                                {% csrf_token %}
+                                <button class="search-button" type="submit"><i class="fas fa-search text-white"
+                                                                               aria-hidden="true"></i></button>
+                                <input id="query" name="search" class="form-control form-control-sm ml-3 w-75"
+                                       type="text"
+                                       placeholder="Search" aria-label="Search" value="{{ request.GET.search }}"
+                                       aria-label="Search">
+                            </form>
+                        </ul>
+                        <div class="form-inline my-2 my-lg-2">
+                            <ul class="navbar-nav profile-menu-drop-down">
+                                {% if user.is_authenticated %}
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink"
+                                           role="button"
+                                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Hello,
+                                            {{ request.user.first_name }} !
+                                        </a>
+                                        <div class="dropdown-menu custom-dropdown"
+                                             aria-labelledby="navbarDropdownMenuLink" style="width: 100%">
+                                            <a class="dropdown-item"
+                                               href="{% url 'user_profile' request.user.profile.pk %}">My
+                                                Profile</a>
+                                            <a class="dropdown-item" href="{% url 'favorite_list' %}">My Favorite
+                                                Entries</a>
+                                            <a class="dropdown-item"
+                                               href="{% url 'edit_profile_page' request.user.profile.pk %}">Edit
+                                                User Profile</a>
+                                            <a class="dropdown-item" href="{% url 'user_account_settings' %}">Account
+                                                Settings</a>
+                                            <a class="dropdown-item" href="{% url 'change_password' %}">Change
+                                                Password</a>
+                                            <a href="{% url 'logout' %}" id="logout"
+                                               class="btn btn-warning dropdown-item">Logout</a>
+                                        </div>
+                                    </li>
+                                {% else %}
+                                    <a href="{% url 'register' %}" class="btn btn-warning">Sign Up</a>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </header>
     </div>
-</nav>
+</div>
+
 
 <!-- Page Content -->
-<div class="container">
+<div class="container" style="margin-top: 3%;">
 
     <div class="row">
 
@@ -77,54 +133,6 @@
         <!-- Sidebar Widgets Column -->
         <div class="col-md-4 sidebar-nav">
 
-            <!-- Search Widget -->
-            <div class="card my-4">
-                <h5 class="card-header">Search</h5>
-                <div class="card-body">
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Search for...">
-                        <span class="input-group-append">
-                <button class="btn btn-secondary" type="button">Go!</button>
-              </span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Categories Widget -->
-            <div class="card my-4">
-                <h5 class="card-header">Categories</h5>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <ul class="list-unstyled mb-0">
-                                <li>
-                                    <a href="#">Web Design</a>
-                                </li>
-                                <li>
-                                    <a href="#">HTML</a>
-                                </li>
-                                <li>
-                                    <a href="#">Freebies</a>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="col-lg-6">
-                            <ul class="list-unstyled mb-0">
-                                <li>
-                                    <a href="#">JavaScript</a>
-                                </li>
-                                <li>
-                                    <a href="#">CSS</a>
-                                </li>
-                                <li>
-                                    <a href="#">Tutorials</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <!-- Side Widget -->
             <div class="card my-4">
                 <h5 class="card-header">Side Widget</h5>
@@ -133,25 +141,26 @@
                     new Bootstrap 4 card containers!
                 </div>
             </div>
-            <div class="card my-4">
-                <h5 class="card-header text-center">Logged in Information</h5>
-                <div class="card-body">
-                    <ul class="list-unstyled mb-0">
-                        <li>
-                            <p><strong>Username:</strong> {{ user.username }} </p>
-                        </li>
-                        <li>
-                            <p><strong>Email:</strong></p>{{ user.email }} </p>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
         </div>
 
     </div>
     <!-- /.row -->
+    {% if is_paginated %}
+        <!-- Pagination -->
+        <ul class="pagination justify-content-center mb-4">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">&larr; Older</a>
+                </li>
+            {% endif %}
 
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">Newer &rarr;</a>
+                </li>
+            {% endif %}
+        </ul>
+    {% endif %}
 </div>
 <!-- /.container -->
 

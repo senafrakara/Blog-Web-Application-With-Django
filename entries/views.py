@@ -1,8 +1,12 @@
+from django.contrib.messages.views import SuccessMessageMixin
+from django.core.mail import send_mail
+from django.db.models import Q
 from django.forms import ModelForm
-from django.views.generic import ListView, DetailView, CreateView, DeleteView, UpdateView
+from django.views import generic
+from django.views.generic import ListView, CreateView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from .forms import CommentForm
+from .forms import CommentForm, ContactForm
 from .models import Entry, Comment
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -19,7 +23,7 @@ class HomeView(ListView):
     template_name = 'entries/index.html'
     context_object_name = "blog_entries"
     ordering = ['-entry_date']
-    paginate_by = 3
+    paginate_by = 9
 
 
 @login_required()
@@ -32,51 +36,6 @@ def Likeview(request, pk):
         entry.likes.add(request.user)
         liked = True
     return HttpResponseRedirect(reverse('entry-detail', args=[str(pk)]))
-
-
-# def UnLikeview(request, pk):
-#     entry = get_object_or_404(Entry, pk=pk)
-#     entry.likes.remove(request.user)
-#     return HttpResponseRedirect(reverse('entry-detail', args=[str(pk)]))
-
-
-# @login_required
-# def delete_own_comment(request, message_id):
-#     comment = get_object_or_404(Comment.get_model(), pk=message_id,
-#             site__pk=settings.SITE_ID)
-#     if comment.user == request.user:
-#         comment.is_removed = True
-#         comment.save()
-# # LoginRequiredMixin parametre olarak vardı buna ve homeview a
-# class EntryView(DetailView):
-#     model = Entry
-#     template_name = 'entries/entry_detail.html'
-
-# def post_detail(request, slug):
-#     template_name = 'post_detail.html'
-#     post = get_object_or_404(Post, slug=slug)
-#     comments = post.comments.filter(active=True)
-#     new_comment = None
-#     # Comment posted
-#     if request.method == 'POST':
-#         comment_form = CommentForm(data=request.POST)
-#         if comment_form.is_valid():
-#             # Create Comment object but don't save to database yet
-#             new_comment = comment_form.save(commit=False)
-#             # Assign the current post to the comment
-#             new_comment.post = post
-#             # Save the comment to the database
-#             new_comment.save()
-#     else:
-#         comment_form = CommentForm()
-#
-#     return render(request, template_name, {'post': post,
-#                                            'comments': comments,
-#                                            'new_comment': new_comment,
-#                                            'comment_form': comment_form})
-# class EntryView(DetailView):
-#     model = Entry
-#     template_name = 'entries/entry_detail.html'
 
 
 def EntryView(request, pk):
@@ -103,16 +62,23 @@ def EntryView(request, pk):
     else:
         form = CommentForm()
     total_likes = entry_commented.total_likes()
+
     liked = False
     if entry_commented.likes.filter(pk=request.user.pk).exists():
         liked = True
+
+    favorite = False
+    if entry_commented.favorites.filter(pk=request.user.pk).exists():
+        favorite = True
+
     context = {
         'entry': entry_commented,
         'comment_form': form,
         'new_comment': new_comment,
         'comments': comments,
         'total_likes': total_likes,
-        'liked': liked
+        'liked': liked,
+        'favorite': favorite,
     }
     return render(request, 'entries/entry_detail.html', context)
 
@@ -122,26 +88,10 @@ class CreateEntryView(LoginRequiredMixin, CreateView, ModelForm):
     template_name = 'entries/create_entry.html'
     fields = ['entry_title', 'entry_text', 'image']
 
-    # fields = ['entry_title', 'entry_text_1', 'entry_text_2', 'image_title', 'image_two']
-
     def form_valid(self, form):
         form.instance.entry_author = self.request.user
         # we set the author equal to the logged in user
         return super().form_valid(form)
-
-
-#
-# class OwnerProtectMixin(object):
-#     def dispatch(self, request, *args, **kwargs):
-#         objectUser = self.get_object()
-#         if objectUser.commenter != self.request.user:
-#             return HttpResponseForbidden()
-#         return super(OwnerProtectMixin, self).dispatch(request, *args, **kwargs)
-#
-#
-# @method_decorator(login_required, name='dispatch')
-# class CommentDeleteView(OwnerProtectMixin, DeleteView):
-#     model = Comment
 
 
 @login_required()
@@ -157,19 +107,6 @@ def comment_delete(request, pk):
     return redirect(f'/entry/{urll}')
 
 
-# @login_required()
-# def entry_delete(request, pk):
-#     comment = get_object_or_404(Comment, pk=pk)
-#     deleted_comment= None
-#     urll = comment.entry.pk
-#     if request.method == 'POST':
-#         deleted_comment = comment.delete()
-#         # entry_url = f'entry/{urll}'
-#         # return render(request, entry_url, context={'deleted_comment':deleted_comment})
-#
-#     return redirect(f'/entry/{urll}')
-
-
 @login_required()
 def delete_entry(request, pk):
     entry = get_object_or_404(Entry, pk=pk)
@@ -180,23 +117,64 @@ def delete_entry(request, pk):
         return redirect('/')
 
 
-# def entry_edit(request, pk):
-#     entry = get_object_or_404(Entry, pk=pk)
-#     if request.method == 'POST':
-#         form = CreateEntryView(request.POST, instance=entry)
-#         if form.is_valid():
-#             entry = form.save(commit=False)
-#             entry.save()
-#             return redirect('entry-detail', pk=entry.pk)
-#     else:
-#         form = CreateEntryView(instance=entry)
-#
-#         return render(request, 'entries/entry_edit.html', {'form': form})
-#
-#
-
-
-class EditEntryView(LoginRequiredMixin, UpdateView, ModelForm):
+class EditEntryView(SuccessMessageMixin, generic.UpdateView, ModelForm):
     model = Entry
     template_name = 'entries/entry_edit.html'
     fields = ['entry_title', 'entry_text', 'image']
+    # template_name_suffix = '_update_form'
+    success_url = "entry_detail/???pk???"
+
+    def get_success_url(self, **kwargs):
+        return reverse("entry-detail", kwargs={'pk': self.object.pk})
+
+    success_message = "Your entry updated."
+
+
+@login_required()
+def FavoriteView(request, pk):
+    entry = get_object_or_404(Entry, pk=pk)
+    favorite = False
+    if entry.favorites.filter(id=request.user.id).exists():
+        entry.favorites.remove(request.user)
+    else:
+        entry.favorites.add(request.user)
+        favorite = True
+
+    return HttpResponseRedirect(reverse('entry-detail', args=[str(pk)]))
+
+
+def search(request):
+    status = None
+    if request.method == 'GET':
+        name = request.GET.get('search')
+        try:
+            status = Entry.objects.all().filter(
+                Q(entry_title__icontains=name) |
+                Q(entry_author__username__icontains=name)
+            )
+            return render(request, 'entries/index.html', {'blog_entries': status})
+        except:
+            return render(request, "entries/index.html", {'blog_entries': status})
+    else:
+        return render(request, 'entries/index.html', {})
+
+
+def aboutus(request):
+    return render(request, 'entries/aboutus.html', {})
+
+
+def contactus(request):
+    if request.method == 'GET':
+        form = ContactForm()
+    else:
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            from_email = form.cleaned_data['from_email']
+            message = form.cleaned_data['message']
+            try:
+                send_mail(username, from_email, message, ['senafrakara@gmail.com'])
+            except BadHeaderError:
+                return HttpResponse('Invalid header found. ')
+            return render(request, 'entries/contactus.html', {'username': username})
+    return render(request, 'entries/contactus.html', {'form': form})

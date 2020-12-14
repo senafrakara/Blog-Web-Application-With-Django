@@ -1,0 +1,40 @@
+{% extends 'entries/base.html' %}
+{% load static %}
+{% block content %}
+
+    <style>
+        .sidebar-nav {
+            display: none;
+        }
+    </style>
+    <div class="col-md-12 col-lg-12 col-sm-12">
+        <section class="jumbotron text-center bg-white">
+            <div class="container">
+                <h1>Favourites</h1>
+                <p class="lead text-muted">Here you can remove or view the favourites</p>
+            </div>
+        </section>
+
+
+    </div>
+    {% for entry in favorites %}
+        <div class="col-sm-12 col-md-6 col-lg-6">
+            <div class="card mb-4">
+                <div class="card-footer text-muted">
+                    Posted on {{ entry.entry_date }} by
+                    <a href="{% url 'user_profile' entry.entry_author.profile.pk %}">{{ entry.entry_author }}</a>
+                </div>
+
+                <img class="card-img-top entry-img-profile" src="{{ entry.image.url }}" height=”300” width=”750”
+                     alt="Card image cap">
+                <div class="card-body">
+                    <h2 class="card-title">{{ entry.entry_title }}</h2>
+                    <p class="card-text">{{ entry.entry_text |truncatechars:150 }}</p>
+                    <a href="{% url 'entry-detail' entry.pk %}" class="btn btn-primary">Read More &rarr;</a>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+
+
+{% endblock %}

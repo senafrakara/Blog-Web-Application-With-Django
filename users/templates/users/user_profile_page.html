@@ -1,0 +1,69 @@
+{% extends "entries/base.html" %}
+{#bu base html i extends etmesi demek inheritance yani, base.htmldeki block content içine bu sayfanın içeriği gelir#}
+{% load static %}
+{% block content %}
+
+    <style>
+        .sidebar-nav {
+            display: none;
+        }
+
+    </style>
+
+    <div class="col-md-12 col-lg-12 col-sm-12 author-detail-user-profile">
+        <section class="jumbotron text-center bg-white author-main-details">
+            <div class="col-md-2 col-sm-12 col-lg-3">
+                {% if page_user.profile_pic %}
+                    <img class="profile-page-pic rounded-circle" src="{{ page_user.profile_pic.url }}">
+                {% else %}
+                    <img class="profile-pic" src="{% static 'djangoProject/images/profile2.png' %}">
+                {% endif %}
+            </div>
+            <div class="col-md-10 col-sm-12 col-lg-9" style="margin-left: 2%;">
+                <h1>
+                    <small>{{ page_user.user.first_name }} {{ page_user.user.last_name }}</small>
+                </h1>
+                <p class="small text-muted social-links">
+                    {% if page_user.website_url %}
+                        <a href="{{ page_user.profile.website_url }}">Website</a> |
+                    {% endif %}
+                    {% if page_user.faceboook_url %}
+                        <a href="{{ page_user.faceboook_url }}">Facebook</a> |
+                    {% endif %}
+                    {% if page_user.twitter_url %}
+                        <a href="{{ page_user.twitter_url }}">Twitter</a> |
+                    {% endif %}
+                    {% if page_user.instagram_url %}
+                        <a href="{{ page_user.instagram_url }}">Instagram</a> |
+                    {% endif %}
+                    {% if page_user.pinterest_url %}
+                        <a href="{{ page_user.pinterest_url }}">Pinterest</a> |
+                    {% endif %}
+
+                </p>
+                <p class="card-text">{{ page_user.bio }}</p>
+
+
+            </div>
+        </section>
+    </div>
+
+    {% for entry in entries %}
+        <div class="col-sm-12 col-md-6 col-lg-6">
+            <div class="card mb-4">
+                <div class="card-footer text-muted">
+                    Posted on {{ entry.entry_date }} by
+                    <a href="{% url 'user_profile' entry.entry_author.profile.pk %}">{{ entry.entry_author }}</a>
+                </div>
+
+                <img class="card-img-top entry-img-profile" src="{{ entry.image.url }}"
+                     alt="Card image cap">
+                <div class="card-body">
+                    <h2 class="card-title">{{ entry.entry_title }}</h2>
+                    <p class="card-text">{{ entry.entry_text |truncatechars:150 }}</p>
+                    <a href="{% url 'entry-detail' entry.pk %}" class="btn btn-primary">Read More &rarr;</a>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}

@@ -1,9 +1,17 @@
 from django.contrib import admin
-from .models import Entry, Comment
+from .models import Entry, Comment, Profile
 
 # Register your models here.
 
-admin.site.register(Entry)
+#in this page we defined models which are presented to admin panel. If we want to change the view of the data to the admin,
+#we set this in below codes
+
+
+@admin.register(Entry)
+class EntryAdmin(admin.ModelAdmin):
+    list_display = ('entry_title', 'entry_author', 'entry_date')
+    list_filter = ('entry_title', 'entry_author', 'entry_date')
+    search_fields = ('entry_title', 'entry_author')
 
 
 @admin.register(Comment)
@@ -17,4 +25,9 @@ class CommentAdmin(admin.ModelAdmin):
         queryset.update(active=True)
 
 
-#admin.site.register(Comment)
+@admin.register(Profile)
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ( 'user','profile_pic',)
+    list_filter = ('user',)
+    search_fields = ('user',)
+

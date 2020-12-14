@@ -1,7 +1,9 @@
 from django import forms
 from django.contrib.auth.models import User
 #this is for the authentication system that we've worked with before
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+
+
 #last one is the user creation form and this is provided by the django and it will help us
 #handle the creation of our new users
 
@@ -16,4 +18,6 @@ class RegistrationForm(UserCreationForm):
     class Meta:
         model = User
         fields = ['username', 'email', 'first_name', 'last_name', 'password1', 'password2']
+
+
 

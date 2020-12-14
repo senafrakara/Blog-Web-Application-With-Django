@@ -16,6 +16,8 @@ class Entry(models.Model):
     image = models.ImageField(upload_to='images/',
                               blank=False)  # default image url is deleted because image field made required by the way
     likes = models.ManyToManyField(User, related_name='blog_entries')
+    favorites = models.ManyToManyField(User, related_name='entry_favorites', blank=True)
+
     # entry_title = models.CharField(max_length=50)
     # entry_text_1 = models.TextField()
     # entry_text_2 = models.TextField()
@@ -44,6 +46,20 @@ class Entry(models.Model):
 
     def total_likes(self):
         return self.likes.count()
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
+    bio = models.TextField()
+    profile_pic = models.ImageField(upload_to='images/', blank=True, null=True)
+    website_url = models.CharField(max_length=255, null=True, blank=True)
+    faceboook_url = models.CharField(max_length=255, null=True, blank=True)
+    twitter_url = models.CharField(max_length=255, null=True, blank=True)
+    instagram_url = models.CharField(max_length=255, null=True, blank=True)
+    pinterest_url = models.CharField(max_length=255, null=True, blank=True)
+
+    def __str__(self):
+        return str(self.user)
 
 
 class Comment(models.Model):
