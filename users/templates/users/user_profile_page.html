@@ -49,21 +49,25 @@
     </div>
 
     {% for entry in entries %}
-        <div class="col-sm-12 col-md-6 col-lg-6">
+        <div class="col-sm-12 col-md-4 col-lg-4">
             <div class="card mb-4">
-                <div class="card-footer text-muted">
-                    Posted on {{ entry.entry_date }} by
-                    <a href="{% url 'user_profile' entry.entry_author.profile.pk %}">{{ entry.entry_author }}</a>
-                </div>
-
-                <img class="card-img-top entry-img-profile" src="{{ entry.image.url }}"
+                <img class="card-img-top entry-img-main" src="{{ entry.image.url }}" height=”300” width=”750”
                      alt="Card image cap">
-                <div class="card-body">
-                    <h2 class="card-title">{{ entry.entry_title }}</h2>
-                    <p class="card-text">{{ entry.entry_text |truncatechars:150 }}</p>
-                    <a href="{% url 'entry-detail' entry.pk %}" class="btn btn-primary">Read More &rarr;</a>
+                <div class="card-body" style="height: 270px;">
+                    <div class="index-title-entry">
+                        <h3 class="card-title index-title-entry">{{ entry.entry_title }}</h3>
+                    </div>
+
+                    <div class="date-author-detail">
+                        <span>{{ entry.entry_date| date:'d-m-Y' }}</span>
+                    </div>
+                    <div class="entry-text-main">
+                        <p class="card-text">{{ entry.entry_text |truncatechars:150 }}</p>
+                    </div>
+                    <a class="read-more-btn" href="{% url 'entry-detail' entry.pk %}">Read More »</a>
                 </div>
             </div>
         </div>
+
     {% endfor %}
 {% endblock %}
