@@ -51,6 +51,7 @@
     </style>
     {% if user.is_authenticated %}
         {% if messages %}
+            {#            if user is logged in an there is a message from edit profile process such as your profile is updated#}
             <div class="col-lg-3 color03">
                 <ul class="messages">
                     {% for message in messages %}
@@ -60,6 +61,7 @@
             </div>
         {% endif %}
         {% if request.user.id == profile.user.id %}
+            {#            if request user is equal to the profile user then edit profile page displayed#}
             <div class="col-md-12 col-lg-12 col-sm-12" style="margin-top: 2%;">
                 <div class="card mb-4">
                     <div class="card-header">
@@ -73,6 +75,7 @@
                                          style="height: 140px; background-color: rgb(233, 236, 239);"><span
                                             style="color: rgb(166, 168, 170); font: bold 8pt Arial;">
                                         {% if profile.profile_pic %}
+                                            {#                                            if profile has a profile pic then display it, otherwise displays default one#}
                                             <img src="{{ profile.profile_pic.url }}" class="profile-pic">
                                         {% else %}
                                             <img class="profile-pic"
@@ -86,15 +89,14 @@
                                         class="pt-sm-2 pb-1 mb-0 text-nowrap">{{ profile.user.first_name }} {{ profile.user.last_name }}</h4>
                                     <p class="mb-0">@{{ profile.user.username }}</p>
                                 </div>
-                                {#                                <div class="text-center text-sm-right"><span#}
-                                {#                                    <div class="text-muted"><small></small></div>#}
-                                {#                                </div>#}
                             </div>
                         </div>
                         <div class="form-group">
                             <form method="post" enctype="multipart/form-data">
                                 {% csrf_token %}
+                                {#                    form structure of the django. defined attributes in model class are created in this form and action processed#}
                                 {{ form.media }}
+{#                                if in form, a media file wil be sent then this tag and encytpe tag are used.#}
                                 {{ form.as_p }}
                                 <button class="btn btn-primary" style="float: right;">Save Changes</button>
 

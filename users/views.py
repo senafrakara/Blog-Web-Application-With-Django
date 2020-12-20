@@ -16,10 +16,10 @@ from django.contrib.messages.views import SuccessMessageMixin
 
 # Create your views here.
 
-
+#Kübra Felek --------------------
 def register(request):
     if request.method == 'POST':
-        # eğer post yaratılmış kişi içini doldurmuş ve save demişse yani post metodu request edilmişse, is_valid true dönüyorsa onu db ye kaydeder bilgileri
+        #if the post is created and form is completed, thats mean the form is posted, and if it returns is_valid true and the info is saved into db
         form = RegistrationForm(request.POST)
         if form.is_valid():
             # if form data is valid then save it into the database
@@ -33,7 +33,7 @@ def register(request):
             return redirect('blog-home')
 
     else:
-        # eğer post request edilmemişse yani form yaratılmamışsa boş bir form yaratılır burada da. Hem save edilmesi hem de yaratılması için aynı metod kullanılıyor yani
+        # if anything is not posted, thats mean the form is not competed, here a form is created. new empty form is created.
         form = RegistrationForm()
 
     # context dictionary is created in here and it will contain the name form that contains the value for this form that we've created above here
@@ -47,11 +47,11 @@ def register(request):
 def change_password(request):
     if request.method == 'POST':
         form = PasswordChangeForm(request.user, request.POST)
+        # here there is same form logic with registration
         if form.is_valid():
             user = form.save()
-            update_session_auth_hash(request, user)  # Important!
+            update_session_auth_hash(request, user)
             messages.success(request, 'Your password was successfully updated!')
-            #   messages.info(request, 'Your password has been changed successfully!')
             return redirect('blog-home')
 
         else:
@@ -65,24 +65,30 @@ def change_password(request):
 
 class UserAccountSettingsView(generic.UpdateView):
     form_class = UserChangeForm
+    #UserChangeForm is the form of the authentication system of the django.
     template_name = 'users/user_account_settings.html'
+    #it takes this html file as ui
     success_url = reverse_lazy('blog-home')
 
     def get_object(self):
         return self.request.user
 
+#Kübra Felek ----------------
 
+
+
+#Nursena Karakulah --------
 class ShowProfilePageView(DetailView):
     model = Profile
     template_name = 'users/user_profile_page.html'
 
     def get_context_data(self, *args, **kwargs):
-        # users = Profile.objects.all()
+
         context = super(ShowProfilePageView, self).get_context_data(*args, **kwargs)
         page_user = get_object_or_404(Profile,
                                       pk=self.kwargs['pk'])  # to get a specific user. kwargs['pk'] coming from urls.py
         entries = Entry.objects.filter(entry_author_id=page_user.user.id)
-        # context["page_user"] = page_user #with context we pass some elements such as in here we pass user
+        #with context we pass some elements such as in here we pass user and its entries to display user profile page
         context = {'page_user': page_user, 'entries': entries}
         return context
 
@@ -90,11 +96,12 @@ class ShowProfilePageView(DetailView):
 class EditProfilePageView(SuccessMessageMixin, generic.UpdateView):
     model = Profile
     template_name = 'users/edit_profile_page.html'
+    #this template is used for edit profile function and the model in here our Profile model. Generic Updateview of django is used in here and the fiels are determined by us.
     fields = ['bio', 'profile_pic', 'website_url', 'faceboook_url', 'twitter_url', 'instagram_url', 'pinterest_url']
-    # success_url = reverse_lazy('blog-home')
     success_url = "user_profile/???pk???"
 
     def get_success_url(self, **kwargs):
+        #to get the sucess url this method is used and with url user-profile, pk of the user is sent and a succesfull message is sent also to the user_profile page
         return reverse("user_profile", kwargs={'pk': self.object.pk})
 
     success_message = "Your profile updated."
@@ -103,4 +110,7 @@ class EditProfilePageView(SuccessMessageMixin, generic.UpdateView):
 def favorite_list(request):
     favorites = Entry.objects.filter(favorites=request.user)
     context = {'favorites': favorites}
+    #this method returns the favorites of the that user and displays it in favroite_list.html
     return render(request, 'users/favorite_list.html', context)
+
+#Nursena Karakulah --------

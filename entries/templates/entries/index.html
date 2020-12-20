@@ -50,6 +50,7 @@
     </div>
     <div class="col-md-12 col-sm-12 col-lg-12"></div>
     {% for entry in blog_entries %}
+{#        blog_entries comes from HomeView in views.py. This returns all entries and displayed their information#}
         <div class="col-sm-12 col-md-4 col-lg-4">
             <div class="card mb-4">
                 <img class="card-img-top entry-img-main" src="{{ entry.image.url }}" height=”300” width=”750”
@@ -60,14 +61,15 @@
                     </div>
 
                     <div class="date-author-detail">
-                        <span>{{ entry.entry_date| date:'d-m-Y' }}</span>
+                        <span>{{ entry.entry_date| date:'d-m-Y' }} / </span>
                         <span><a
                                 href="{% url 'user_profile' entry.entry_author.profile.pk %}">{{ entry.entry_author }}</a></span>
+                        <!-- For all registered users, there is one profile related with that user. To access author page, profile of that author is used-->
                     </div>
                     <div class="entry-text-main">
                         <p class="card-text">{{ entry.entry_text |truncatechars:150 }}</p>
                     </div>
-                    {#                    <a href="{% url 'entry-detail' entry.pk %}" class="btn btn-primary">Read More &rarr;</a>#}
+{#                    user is directed to the entry detail page with this button by sending pk of that entry to the related views which is called entry-detail#}
                     <a class="read-more-btn" href="{% url 'entry-detail' entry.pk %}">Read More »</a>
                 </div>
             </div>
@@ -75,44 +77,6 @@
 
     {% endfor %}
     </div>
-
-    {##}
-    {#    <div class="col-md-8">#}
-    {#        {% for entry in blog_entries %}#}
-    {#            <!-- Blog Post -->#}
-    {#            <div class="card mb-4">#}
-    {#                <div class="card-footer text-muted">#}
-    {#                    Posted on {{ entry.entry_date }} by#}
-    {#                    <a href="{% url 'user_profile' entry.entry_author.profile.pk %}">{{ entry.entry_author }}</a>#}
-    {#                </div>#}
-    {##}
-    {#                <img class="card-img-top entry-img" src="{{ entry.image.url }}" height=”300” width=”750”#}
-    {#                     alt="Card image cap">#}
-    {#                <div class="card-body">#}
-    {#                    <h2 class="card-title">{{ entry.entry_title }}</h2>#}
-    {#                    <p class="card-text">{{ entry.entry_text |truncatechars:150 }}</p>#}
-    {#                    <a href="{% url 'entry-detail' entry.pk %}" class="btn btn-primary">Read More &rarr;</a>#}
-    {#                </div>#}
-    {#            </div>#}
-    {#        {% endfor %}#}
-    {##}
-    {#        {% if is_paginated %}#}
-    {#            <!-- Pagination -->#}
-    {#            <ul class="pagination justify-content-center mb-4">#}
-    {#                {% if page_obj.has_previous %}#}
-    {#                    <li class="page-item">#}
-    {#                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">&larr; Older</a>#}
-    {#                    </li>#}
-    {#                {% endif %}#}
-    {##}
-    {#                {% if page_obj.has_next %}#}
-    {#                    <li class="page-item">#}
-    {#                        <a class="page-link" href="?page={{ page_obj.next_page_number }}">Newer &rarr;</a>#}
-    {#                    </li>#}
-    {#                {% endif %}#}
-    {#            </ul>#}
-    {#        {% endif %}#}
-    {#    </div>#}
 
 
 {% endblock %}

@@ -51,7 +51,7 @@
     </style>
 
     {% if user.is_authenticated %}
-
+{#        if users are logged in, they can edit the entry which is belonged to themselves. To access this page user must be authenticated, this is checked in base.html#}
         <div class="col-md-12 col-lg-12 col-sm-12" style="margin-top: 2%;">
 
             <div class="card mb-4">
@@ -63,6 +63,7 @@
                 <div class="card-body">
                     <div class="form-group">
                         <form method="POST" enctype="multipart/form-data">
+
                             {% csrf_token %}
                             {{ form.media }}
                             {{ form.as_p }}

@@ -2,16 +2,17 @@
 {% load static %}
 {% block content %}
     {% load crispy_forms_tags %}
-
+<!-- Kübra Felek -->
     <div class="col-md-12 col-lg-12 col-sm-12" style="margin-top: 2%;">
 
         <div class="card mb-4">
-           <div class="card-header">
+            <div class="card-header">
                 Contact Us
             </div>
             <div class="card-body">
                 <div class="form-group">
                     {% if username %}
+{#                        if a user is completed the form and then username is sent to this page and process is succsessfull message displayed#}
                         <h2>Thank you for message, {{ username }}</h2>
                         <br>
                         <p>We received your email and will respond shortly...</p>

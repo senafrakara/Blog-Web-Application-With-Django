@@ -36,6 +36,8 @@
             <div class="form-group">
                 <form method="POST">
                     {% csrf_token %}
+                    {#                    form structure of the django. defined attributes in model class are created in this form and action processed#}
+{#                    this page contains user account settings, has some fields such as username, first name, last name #}
                     {{ form.as_p }}
                     <button type="submit" class="btn btn-primary" style="float: right;">Save Changes</button>
 

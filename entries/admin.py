@@ -5,6 +5,7 @@ from .models import Entry, Comment, Profile
 
 #in this page we defined models which are presented to admin panel. If we want to change the view of the data to the admin,
 #we set this in below codes
+admin.site.register(Profile)
 
 
 @admin.register(Entry)
@@ -25,9 +26,9 @@ class CommentAdmin(admin.ModelAdmin):
         queryset.update(active=True)
 
 
-@admin.register(Profile)
-class ProfileAdmin(admin.ModelAdmin):
-    list_display = ( 'user','profile_pic',)
-    list_filter = ('user',)
-    search_fields = ('user',)
-
+# @admin.register(Profile)
+# class ProfileAdmin(admin.ModelAdmin):
+#     list_display = ('user','profile_pic',)
+#     list_filter = ('user',)
+#     search_fields = ('user',)
+#

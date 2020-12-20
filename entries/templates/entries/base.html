@@ -1,4 +1,5 @@
 {% load static %}
+{#to reach files in static directory such as images etc.#}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -10,9 +11,8 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Blog Home - Start Bootstrap Template</title>
+    <title>Blog Home</title>
 
-    <!-- Bootstrap core CSS -->
     <link href="{% static 'entries/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
 
     <!-- Custom styles for this template -->
@@ -27,6 +27,7 @@
 </head>
 
 <body>
+{#if there is a message coming from a process such as edit profile or edit entry.#}
 {% if messages %}
     {% for message in messages %}
         {% if message.tags %}
@@ -92,6 +93,7 @@
                         <div class="form-inline my-2 my-lg-2">
                             <ul class="navbar-nav profile-menu-drop-down">
                                 {% if user.is_authenticated %}
+{#                                    if user is logged in than let them to access these links#}
                                     <li class="nav-item dropdown">
                                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink"
                                            role="button"
@@ -137,10 +139,8 @@
         {% block content %} {% endblock %}
 
 
-        <!-- Sidebar Widgets Column -->
         <div class="col-md-4 sidebar-nav">
 
-            <!-- Side Widget -->
             <div class="card my-4">
                 <h5 class="card-header">Side Widget</h5>
                 <div class="card-body">
@@ -153,6 +153,7 @@
     </div>
     <!-- /.row -->
     {% if is_paginated %}
+{#        if page is paginated then create other pages newer and older#}
         <!-- Pagination -->
         <ul class="pagination justify-content-center mb-4">
             {% if page_obj.has_previous %}
@@ -174,7 +175,7 @@
 <!-- Footer -->
 <footer class="py-5 bg-dark">
     <div class="container">
-        <p class="m-0 text-center text-white">Copyright &copy; Your Website 2020</p>
+        <p class="m-0 text-center text-white">Copyright &copy; My Compass 2020</p>
     </div>
     <!-- /.container -->
 </footer>
@@ -182,7 +183,6 @@
 <!-- Bootstrap core JavaScript -->
 <script src="{% static 'entries/vendor/jquery/jquery.min.js' %}"></script>
 <script src="{% static 'entries/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-<script src="{% static 'entries/js/autosize.js' %}"></script>
 
 </body>
 

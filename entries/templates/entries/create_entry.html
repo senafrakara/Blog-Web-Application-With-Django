@@ -1,6 +1,5 @@
 {% extends "entries/base.html" %}
-{#bu base html i extends etmesi demek inheritance yani, base.htmldeki block content içine bu sayfanın içeriği gelir#}
-
+{% load static %}
 {% block content %}
     <style>
         label {
@@ -38,6 +37,7 @@
                 <form method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
                     {{ form.as_p }}
+{#                    form structure of the django. defined attributes in model class are created in this form and action processed#}
                     <button type="submit" class="btn btn-primary post-entry-button">Post Entry</button>
 
 

@@ -14,6 +14,7 @@
         <section class="jumbotron text-center bg-white author-main-details">
             <div class="col-md-2 col-sm-12 col-lg-3">
                 {% if page_user.profile_pic %}
+{#                    if profile has a profile pic and displays it, otherwise displays default one#}
                     <img class="profile-page-pic rounded-circle" src="{{ page_user.profile_pic.url }}">
                 {% else %}
                     <img class="profile-pic" src="{% static 'djangoProject/images/profile2.png' %}">
@@ -24,6 +25,7 @@
                     <small>{{ page_user.user.first_name }} {{ page_user.user.last_name }}</small>
                 </h1>
                 <p class="small text-muted social-links">
+{#                if user, that's mean profile, has these links than displays it otherwise it does not display#}
                     {% if page_user.website_url %}
                         <a href="{{ page_user.profile.website_url }}">Website</a> |
                     {% endif %}
@@ -49,6 +51,7 @@
     </div>
 
     {% for entry in entries %}
+{#        this area the entries whose are the user, that author. #}
         <div class="col-sm-12 col-md-4 col-lg-4">
             <div class="card mb-4">
                 <img class="card-img-top entry-img-main" src="{{ entry.image.url }}" height=”300” width=”750”

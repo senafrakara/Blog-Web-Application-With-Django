@@ -134,11 +134,9 @@ LOGIN_URL = 'login'
 
 LOGOUT_REDIRECT_URL = 'blog-home'
 
-# EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
-# EMAIL_FILE_PATH = str(BASE_DIR.joinpath('sent_emails'))
-
 # This will display email in Console.
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+#these are for images, to get images url and display image url with images/
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = 'images/'

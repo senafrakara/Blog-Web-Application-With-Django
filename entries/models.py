@@ -15,41 +15,26 @@ class Entry(models.Model):
                                      on_delete=models.CASCADE)
     image = models.ImageField(upload_to='images/',
                               blank=False)  # default image url is deleted because image field made required by the way
-    likes = models.ManyToManyField(User, related_name='blog_entries')
-    favorites = models.ManyToManyField(User, related_name='entry_favorites', blank=True)
+    likes = models.ManyToManyField(User, related_name='blog_entries', blank=True, null=True)
+    favorites = models.ManyToManyField(User, related_name='entry_favorites', blank=True, null=True)
 
-    # entry_title = models.CharField(max_length=50)
-    # entry_text_1 = models.TextField()
-    # entry_text_2 = models.TextField()
-    # entry_date = models.DateTimeField(
-    #     auto_now_add=True)
-    # # this will automatically take and time when the entry is created
-    # entry_author = models.ForeignKey(User,
-    #                                  on_delete=models.CASCADE)
-    # image_title = models.ImageField(upload_to='images/', default='default-title-img.png')
-    # image_two = models.ImageField(upload_to='images/', null=True, blank=True)
-
-    # second arg is the on_delete argument which defines what happens when an object reference is deleted
-    # so we'll yse model cascade which would not leave all the posts associated with a user
-    # if that user is deleted from the system
     class Meta:
         verbose_name_plural = "Entries"
 
     def __str__(self):
-        # bu metotla birlikte admin tarafında işleri biraz daha kolaylaştırmak
-        # için entry nin title ını isim olarak döndüreceğiz.
-        # Entry object (1) değil de entrynin title ı neyse onu gösterecek
+        #this returns as string entry title and entry author instead of return object(1)
         return self.entry_title + '|' + str(self.entry_author)
 
     def get_absolute_url(self):
+        #returns entry pk to get url like entry_detail/3
         return reverse('entry-detail', args=[str(self.pk)])
 
     def total_likes(self):
+        #takes like count of that entry
         return self.likes.count()
 
 
 class Profile(models.Model):
-    user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
     bio = models.TextField()
     profile_pic = models.ImageField(upload_to='images/', blank=True, null=True)
     website_url = models.CharField(max_length=255, null=True, blank=True)
@@ -57,6 +42,7 @@ class Profile(models.Model):
     twitter_url = models.CharField(max_length=255, null=True, blank=True)
     instagram_url = models.CharField(max_length=255, null=True, blank=True)
     pinterest_url = models.CharField(max_length=255, null=True, blank=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return str(self.user)
@@ -71,6 +57,8 @@ class Comment(models.Model):
 
     class Meta:
         ordering = ['-created_on']
+        #order comments according to the reverse created date
 
     def __str__(self):
+        #returns  comment content and commenter
         return f'{self.comment_content} by {self.commenter}'

@@ -1,24 +1,25 @@
-{%  extends "entries/base.html" %}
+{% extends "entries/base.html" %}
 
 
-{%  block content %}
-  <!-- Blog Entries Column -->
-      <div class="col-md-8 register-form">
+{% block content %}
+    <!-- Blog Entries Column -->
+    <div class="col-md-8 register-form">
         <div class="card mb-4">
-          <div class="card-header">
-              Create An Account
-          </div>
-          <div class="card-body">
-              <form method="POST">
-                  {%  csrf_token %}
-                  {{ form.as_p  }}
-                  <button type="submit" class="btn btn-primary">Create Account</button>
+            <div class="card-header">
+                Create An Account
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    {#                    form structure of the django. defined attributes in model class are created in this form and action processed#}
+                    <button type="submit" class="btn btn-primary">Create Account</button>
 
 
-              </form>
-          </div>
-             <h2>Do you have an account?  <a href="{% url 'login' %}">Login</a></h2>
+                </form>
+            </div>
+            <h2>Do you have an account? <a href="{% url 'login' %}">Login</a></h2>
         </div>
 
-      </div>
+    </div>
 {% endblock %}

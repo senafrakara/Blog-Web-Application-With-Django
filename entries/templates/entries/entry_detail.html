@@ -1,7 +1,5 @@
 {% extends "entries/base.html" %}
-{#bu base html i extends etmesi demek inheritance yani, base.htmldeki block content içine bu sayfanın içeriği gelir#}
 {% load static %}
-{#this is for to get static file in base dir #}
 {% block content %}
     <style>
         .sidebar-nav {
@@ -25,6 +23,7 @@
     <!-- Blog Entries Column -->
     <div class="col-md-9">
 
+    <!-- In this page, entry_detail function in views.py is processed. With pk of selected entry is processed in entry detail function and an entry is sent to this page. So we can access info of that entry -->
         <!-- Blog Post -->
         <div class="card mb-4" style="margin-top: 3%;">
             <div class="entry-detail-area">
@@ -32,6 +31,7 @@
                     Posted on {{ entry.entry_date }} by
                     <a href="{% url 'user_profile' entry.entry_author.profile.pk %}">{{ entry.entry_author.first_name }} {{ entry.entry_author.last_name }}</a>
                     {% if request.user == entry.entry_author %}
+{#                        if user of request is equal to the entry's author and user is logged in, then edit entry and delete entry button displayed.#}
                         {% if request.user.is_authenticated %}
                             <button class="btn btn-danger delete-entry-button"
                                     onclick="document.getElementById('id01').style.display='block'">
@@ -71,6 +71,7 @@
                         {% csrf_token %}
                         {% if request.user.is_authenticated %}
                             {% if request.user != entry.entry_author %}
+{#                                if user of request is logged in and if it is not equal to the entry's author thane add my favorites and remove from favorites button displayed#}
                                 {% if favorite %}
                                     <!--If user is logged in and if it did favorite this entry before-->
                                     <button type="submit" name="entry_id" value="{{ entry_id }}"
@@ -116,6 +117,7 @@
 
         </div>
         <hr>
+    <!-- This area for information about entry's author-->
         <div class="card mb-3">
             <div class="row no-gutters">
                 <div class="col-md-3 col-lg-3 col-sm-2">
@@ -139,6 +141,7 @@
                            href="{% url 'user_profile' entry.entry_author.profile.pk %}">{{ entry.entry_author.first_name }} {{ entry.entry_author.last_name }}</a>
 
                         <p class="small text-muted social-links">
+{#                        if author of entry has these links and then displayed them#}
                             {% if entry.entry_author.profile.website_url %}
                                 <a href="{{ entry.entry_author.profile.website_url }}">Website</a> |
                             {% endif %}
@@ -164,14 +167,17 @@
         </div>
 
         <!--- Comment Section -->
+        <!-- Kübra Felek -->
         <div class="card mb-3">
             <div class="col-md-12 card-body">
                 {% if user.is_authenticated %}
                     {% if new_comment %}
+{#                        if user is authenticated and if a request of add comment came from page then display message #}
                         <div class="alert alert-success" role="alert">
                             Your comment is awaiting moderation
                         </div>
                     {% else %}
+{#                        otherwise creates a comment form which is created in forms.py#}
                         <h3>Leave a comment</h3>
                         <form method="post" style="margin-top: 1.3em;">
                             {{ comment_form.as_p }}
@@ -185,6 +191,7 @@
                 {% endif %}
                 <h2 class="comment-counts">{{ comments.count }} comments</h2>
                 {% for comment in comments %}
+{#                    to display all comments of this entry. entries are related with comment with word 'comments' which defined in models.py#}
                     <div class="comments" style="padding: 10px;">
                         <p class="font-weight-bold">
                             {{ comment.commenter }}
@@ -195,6 +202,7 @@
                         </p>
                         {{ comment.comment_content | linebreaks }}
                         {% if request.user == comment.commenter %}
+{#                            if request user is equal to the commenter of that comment, then delete button displayed#}
                             <form method="post" action="{% url 'delete-comment' comment.pk %}">
                                 {% csrf_token %}
                                 <button class="btn btn-danger" type="submit">Delete</button>
@@ -206,10 +214,12 @@
                 {% endfor %}
             </div>
         </div>
+    <!-- Kübra Felek -->
 
     </div>
 
     <div class="col-md-3 edit-delete-like-total">
+        <!-- Entries are liked by only authenticated user but these button are displayed to everyone. If not authenticated user try to like and they are directed to the login page-->
 
         <div class="card my-4">
             <div class="card-body">
@@ -246,6 +256,7 @@
                 modal.style.display = "none";
             }
         }
+
 
         function Like_Down(x) {
             x.classList.toggle("fa-thumbs-down");
