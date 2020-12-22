@@ -16,10 +16,10 @@ from django.contrib.messages.views import SuccessMessageMixin
 
 # Create your views here.
 
-#Kübra Felek --------------------
+# Kübra Felek --------------------
 def register(request):
     if request.method == 'POST':
-        #if the post is created and form is completed, thats mean the form is posted, and if it returns is_valid true and the info is saved into db
+        # if the post is created and form is completed, thats mean the form is posted, and if it returns is_valid true and the info is saved into db
         form = RegistrationForm(request.POST)
         if form.is_valid():
             # if form data is valid then save it into the database
@@ -65,30 +65,29 @@ def change_password(request):
 
 class UserAccountSettingsView(generic.UpdateView):
     form_class = UserChangeForm
-    #UserChangeForm is the form of the authentication system of the django.
+    # UserChangeForm is the form of the authentication system of the django.
     template_name = 'users/user_account_settings.html'
-    #it takes this html file as ui
+    # it takes this html file as ui
     success_url = reverse_lazy('blog-home')
 
     def get_object(self):
         return self.request.user
 
-#Kübra Felek ----------------
+
+# Kübra Felek ----------------
 
 
-
-#Nursena Karakulah --------
+# Nursena Karakulah --------
 class ShowProfilePageView(DetailView):
     model = Profile
     template_name = 'users/user_profile_page.html'
 
     def get_context_data(self, *args, **kwargs):
-
         context = super(ShowProfilePageView, self).get_context_data(*args, **kwargs)
         page_user = get_object_or_404(Profile,
                                       pk=self.kwargs['pk'])  # to get a specific user. kwargs['pk'] coming from urls.py
         entries = Entry.objects.filter(entry_author_id=page_user.user.id)
-        #with context we pass some elements such as in here we pass user and its entries to display user profile page
+        # with context we pass some elements such as in here we pass user and its entries to display user profile page
         context = {'page_user': page_user, 'entries': entries}
         return context
 
@@ -96,21 +95,21 @@ class ShowProfilePageView(DetailView):
 class EditProfilePageView(SuccessMessageMixin, generic.UpdateView):
     model = Profile
     template_name = 'users/edit_profile_page.html'
-    #this template is used for edit profile function and the model in here our Profile model. Generic Updateview of django is used in here and the fiels are determined by us.
+    # this template is used for edit profile function and the model in here our Profile model. Generic Updateview of django is used in here and the fiels are determined by us.
     fields = ['bio', 'profile_pic', 'website_url', 'faceboook_url', 'twitter_url', 'instagram_url', 'pinterest_url']
     success_url = "user_profile/???pk???"
 
     def get_success_url(self, **kwargs):
-        #to get the sucess url this method is used and with url user-profile, pk of the user is sent and a succesfull message is sent also to the user_profile page
+        # to get the sucess url this method is used and with url user-profile, pk of the user is sent and a succesfull message is sent also to the user_profile page
         return reverse("user_profile", kwargs={'pk': self.object.pk})
 
     success_message = "Your profile updated."
 
 
 def favorite_list(request):
-    favorites = Entry.objects.filter(favorites=request.user)
+    favorites = Entry.objects.order_by('-entry_date').filter(favorites=request.user)
     context = {'favorites': favorites}
-    #this method returns the favorites of the that user and displays it in favroite_list.html
+    # this method returns the favorites of the that user and displays it in favroite_list.html
     return render(request, 'users/favorite_list.html', context)
 
-#Nursena Karakulah --------
+# Nursena Karakulah --------

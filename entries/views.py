@@ -15,6 +15,7 @@ from django.http import *
 from django.http import HttpResponseRedirect
 
 
+# Nursena Karakulah -----------------------------------------
 class HomeView(ListView):
     model = Entry
     template_name = 'entries/index.html'
@@ -102,27 +103,12 @@ class CreateEntryView(LoginRequiredMixin, CreateView, ModelForm):
         return super().form_valid(form)
 
 
-# Kübra Felek
-@login_required()
-def comment_delete(request, pk):
-    comment = get_object_or_404(Comment, pk=pk)
-    #takes comment with sent pk
-
-    deleted_comment = None
-    urll = comment.entry.pk
-    if request.method == 'POST':
-        #if method is post then comment deleted. User must be logged in to delete comment
-        deleted_comment = comment.delete()
-
-    return redirect(f'/entry/{urll}')
-
-
 @login_required()
 def delete_entry(request, pk):
     entry = get_object_or_404(Entry, pk=pk)
-    #get the entry with pk which is sent to the this function
+    # get the entry with pk which is sent to the this function
     if request.method == 'POST':
-        #When user clicked on delete entry button, a modal displayed. If user clickec on delete button on that model, firstly image of the entry is deleted and then entry is deleted. User directed to the homepage.
+        # When user clicked on delete entry button, a modal displayed. If user clickec on delete button on that model, firstly image of the entry is deleted and then entry is deleted. User directed to the homepage.
         entry.image.delete()
         entry.delete()
         return redirect('/')
@@ -132,26 +118,26 @@ class EditEntryView(SuccessMessageMixin, generic.UpdateView, ModelForm):
     model = Entry
     template_name = 'entries/entry_edit.html'
     fields = ['entry_title', 'entry_text', 'image']
-    #edit entry form fields are set
+    # edit entry form fields are set
     success_url = "entry_detail/???pk???"
 
     def get_success_url(self, **kwargs):
-        #returns success url when an entry is editted
+        # returns success url when an entry is editted
         return reverse("entry-detail", kwargs={'pk': self.object.pk})
 
     success_message = "Your entry updated."
-    #succes message is sent to the success url, entry detail page if entry is editted.
+    # succes message is sent to the success url, entry detail page if entry is editted.
 
 
 @login_required()
 def FavoriteView(request, pk):
     entry = get_object_or_404(Entry, pk=pk)
     favorite = False
-    #same logic with like entry. if user is favorited to thie entry then if it is clicked remove button, user is removed from favorites list of that entry
+    # same logic with like entry. if user is favorited to thie entry then if it is clicked remove button, user is removed from favorites list of that entry
     if entry.favorites.filter(id=request.user.id).exists():
         entry.favorites.remove(request.user)
     else:
-        #otherwise user is added into favorites list
+        # otherwise user is added into favorites list
         entry.favorites.add(request.user)
         favorite = True
 
@@ -162,19 +148,22 @@ def search(request):
     status = None
     if request.method == 'GET':
         name = request.GET.get('search')
-        #gets the query, text of search
+        # gets the query, text of search
         try:
             status = Entry.objects.all().filter(
                 Q(entry_title__icontains=name) |
                 Q(entry_author__username__icontains=name)
             )
-            #checks if query contains entry title or entry author and returns results in index.html with context called blog_entries
+            # checks if query contains entry title or entry author and returns results in index.html with context called blog_entries
             return render(request, 'entries/index.html', {'blog_entries': status})
         except:
             return render(request, "entries/index.html", {'blog_entries': status})
     else:
-        #if result is empty then returns empty page
+        # if result is empty then returns empty page
         return render(request, 'entries/index.html', {})
+
+
+# Nursena Karakulah -----------------------------------------
 
 
 # Kübra Felek
@@ -199,4 +188,18 @@ def contactus(request):
                 return HttpResponse('Invalid header found. ')
             return render(request, 'entries/contactus.html', {'username': username})
     return render(request, 'entries/contactus.html', {'form': form})
+
+
+@login_required()
+def comment_delete(request, pk):
+    comment = get_object_or_404(Comment, pk=pk)
+    # takes comment with sent pk
+
+    deleted_comment = None
+    urll = comment.entry.pk
+    if request.method == 'POST':
+        # if method is post then comment deleted. User must be logged in to delete comment
+        deleted_comment = comment.delete()
+
+    return redirect(f'/entry/{urll}')
 # Kübra Felek
