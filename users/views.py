@@ -86,7 +86,7 @@ class ShowProfilePageView(DetailView):
         context = super(ShowProfilePageView, self).get_context_data(*args, **kwargs)
         page_user = get_object_or_404(Profile,
                                       pk=self.kwargs['pk'])  # to get a specific user. kwargs['pk'] coming from urls.py
-        entries = Entry.objects.filter(entry_author_id=page_user.user.id)
+        entries = Entry.objects.order_by('-entry_date').filter(entry_author_id=page_user.user.id)
         # with context we pass some elements such as in here we pass user and its entries to display user profile page
         context = {'page_user': page_user, 'entries': entries}
         return context
