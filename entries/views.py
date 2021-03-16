@@ -15,7 +15,6 @@ from django.http import *
 from django.http import HttpResponseRedirect
 
 
-# Nursena Karakulah -----------------------------------------
 class HomeView(ListView):
     model = Entry
     template_name = 'entries/index.html'
@@ -163,10 +162,9 @@ def search(request):
         return render(request, 'entries/index.html', {})
 
 
-# Nursena Karakulah -----------------------------------------
 
 
-# Kübra Felek
+
 def aboutus(request):
     return render(request, 'entries/aboutus.html', {})
 
@@ -202,4 +200,4 @@ def comment_delete(request, pk):
         deleted_comment = comment.delete()
 
     return redirect(f'/entry/{urll}')
-# Kübra Felek
+

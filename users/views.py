@@ -16,7 +16,6 @@ from django.contrib.messages.views import SuccessMessageMixin
 
 # Create your views here.
 
-# Kübra Felek --------------------
 def register(request):
     if request.method == 'POST':
         # if the post is created and form is completed, thats mean the form is posted, and if it returns is_valid true and the info is saved into db
@@ -74,10 +73,7 @@ class UserAccountSettingsView(generic.UpdateView):
         return self.request.user
 
 
-# Kübra Felek ----------------
 
-
-# Nursena Karakulah --------
 class ShowProfilePageView(DetailView):
     model = Profile
     template_name = 'users/user_profile_page.html'
@@ -112,4 +108,4 @@ def favorite_list(request):
     # this method returns the favorites of the that user and displays it in favroite_list.html
     return render(request, 'users/favorite_list.html', context)
 
-# Nursena Karakulah --------
+
